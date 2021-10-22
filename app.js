@@ -1,14 +1,15 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
+const compression = require("compression");
 const app = express();
 
 dotenv.config({ path: "./config.env" });
 
 // mongoDB Connect
 mongoose.connect(
-  "mongodb://localhost:27017/todo-demo?readPreference=primary&appname=MongoDB%20Compass&directConnection=true&ssl=false",
-  { useNewUrlParser: true, useUnifiedTopology: true },
+  "mongodb+srv://todolistapp:todolistapp@cluster0.uibww.mongodb.net/myFirstDatabase?retryWrites=true&w=majority",
+  // { useNewUrlParser: true, useUnifiedTopology: true },
   function (err) {
     if (err) {
       console.error("mongoDB Connection Error!", err);
@@ -152,6 +153,8 @@ app.delete("/todos", (req, res) => {
     }
   });
 });
+
+app.use(compression());
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
