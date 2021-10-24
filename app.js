@@ -9,6 +9,7 @@ dotenv.config({ path: "./config.env" });
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
+// mongo connect
 const ToDoSchema = new mongoose.Schema({
   title: String,
   checkbox: Boolean,
