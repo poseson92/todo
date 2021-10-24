@@ -6,27 +6,12 @@ const app = express();
 
 dotenv.config({ path: "./config.env" });
 
-// mongoDB Connect
-mongoose.connect(
-  "mongodb+srv://todolistapp:todolistapp@cluster0.uibww.mongodb.net/myFirstDatabase?retryWrites=true&w=majority",
-  // { useNewUrlParser: true, useUnifiedTopology: true },
-  function (err) {
-    if (err) {
-      console.error("mongoDB Connection Error!", err);
-    }
-    console.log("mongoDB Connected!");
-  }
-);
-
+app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
-app.use(
-  express.urlencoded({
-    extended: true,
-  })
-);
 
 const ToDoSchema = new mongoose.Schema({
   title: String,
+  checkbox: Boolean,
   description: String,
   createdBy: String,
   createAt: { type: Date, default: Date.now() },
@@ -36,12 +21,13 @@ const toDo = mongoose.model("ToDo", ToDoSchema);
 
 //Create To-Do
 app.post("/", (req, res) => {
-  const { title, description, createdBy } = req.body;
+  const { title, checkbox, description, createdBy } = req.body;
 
   const toDoAdd = new toDo({
     title: title,
-    description: description,
-    createdBy: createdBy,
+    checkbox: checkbox,
+    // description: description,
+    // createdBy: createdBy,
   });
 
   toDoAdd.save((err, todo) => {
@@ -96,14 +82,15 @@ app.get("/todos/:todo_id", (req, res) => {
 app.patch("/todos/:todo_id", (req, res) => {
   const { todo_id } = req.params;
 
-  const { title, description, createdBy } = req.body;
+  const { title, checkbox, description, createdBy } = req.body;
 
   toDo.findByIdAndUpdate(
     todo_id,
     {
       title: title,
-      description: description,
-      createdBy: createdBy,
+      checkbox: checkbox,
+      // description: description,
+      // createdBy: createdBy,
     },
     (err, toDo) => {
       if (err) {
@@ -155,6 +142,10 @@ app.delete("/todos", (req, res) => {
 });
 
 app.use(compression());
+
+mongoose.connect(process.env.MONGOURL, () => {
+  console.log("DB 연결중...");
+});
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
